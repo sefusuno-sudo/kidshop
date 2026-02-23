@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% block title %}{{ category|capitalize if category else 'Toate produsele' }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Acasă</a></li>
+      <li class="breadcrumb-item active">{{ category|capitalize if category else 'Toate produsele' }}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-4">
+
+    <!-- ── SIDEBAR FILTRE ──────────────────────────────────────────────── -->
+    <div class="col-lg-3">
+      <div class="filter-sidebar">
+        <h6 class="fw-800 mb-3">🔍 Filtrează produse</h6>
+        <form action="{{ url_for('shop.products') }}" method="get" id="filterForm">
+          {% if category %}
+          <input type="hidden" name="category" value="{{ category }}">
+          {% endif %}
+
+          <!-- Categorie -->
+          <div class="filter-group">
+            <label class="filter-label">Categorie</label>
+            <select class="form-select form-select-sm" name="category" onchange="this.form.submit()">
+              <option value="">Toate categoriile</option>
+              <option value="imbracaminte" {% if category=='imbracaminte' %}selected{% endif %}>Îmbrăcăminte</option>
+              <option value="incaltaminte" {% if category=='incaltaminte' %}selected{% endif %}>Încălțăminte</option>
+              <option value="accesorii"   {% if category=='accesorii' %}selected{% endif %}>Accesorii</option>
+            </select>
+          </div>
+
+          <!-- Sortare -->
+          <div class="filter-group">
+            <label class="filter-label">Sortare</label>
+            <select class="form-select form-select-sm" name="sort" onchange="this.form.submit()">
+              <option value="newest" {% if sort=='newest' %}selected{% endif %}>Cele mai noi</option>
+              <option value="price_asc" {% if sort=='price_asc' %}selected{% endif %}>Preț ↑</option>
+              <option value="price_desc" {% if sort=='price_desc' %}selected{% endif %}>Preț ↓</option>
+            </select>
+          </div>
+
+          <!-- Preț -->
+          <div class="filter-group">
+            <label class="filter-label">Preț (RON)</label>
+            <div class="d-flex gap-2">
+              <input type="number" class="form-control form-control-sm" name="price_min"
+                     placeholder="Min" value="{{ price_min or '' }}" min="0">
+              <input type="number" class="form-control form-control-sm" name="price_max"
+                     placeholder="Max" value="{{ price_max or '' }}" min="0">
+            </div>
+          </div>
+
+          <!-- Mărime -->
+          <div class="filter-group">
+            <label class="filter-label">Mărime</label>
+            <input type="text" class="form-control form-control-sm" name="size"
+                   placeholder="ex: 80, M..." value="{{ size or '' }}">
+          </div>
+
+          <!-- Culoare -->
+          <div class="filter-group">
+            <label class="filter-label">Culoare</label>
+            <input type="text" class="form-control form-control-sm" name="color"
+                   placeholder="ex: rosu, albastru..." value="{{ color or '' }}">
+          </div>
+
+          <button type="submit" class="btn btn-pink w-100 btn-sm mt-2">
+            <i class="bi bi-funnel me-1"></i>Aplică filtre
+          </button>
+          <a href="{{ url_for('shop.products') }}" class="btn btn-outline-secondary w-100 btn-sm mt-2">
+            <i class="bi bi-x me-1"></i>Resetează
+          </a>
+        </form>
+      </div>
+    </div>
+
+    <!-- ── PRODUSE ─────────────────────────────────────────────────────── -->
+    <div class="col-lg-9">
+
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h4 class="fw-800 mb-0">
+          {% if category %}
+            {% if category == 'imbracaminte' %}👗 Îmbrăcăminte
+            {% elif category == 'incaltaminte' %}👟 Încălțăminte
+            {% else %}🎒 Accesorii{% endif %}
+          {% else %}🛍️ Toate produsele{% endif %}
+        </h4>
+        <span class="text-muted small">{{ pagination.total }} produse găsite</span>
+      </div>
+
+      {% if search %}
+      <div class="alert alert-info alert-sm rounded-3">
+        Rezultate pentru: <strong>"{{ search }}"</strong>
+        <a href="{{ url_for('shop.products') }}" class="ms-2 text-muted"><i class="bi bi-x"></i></a>
+      </div>
+      {% endif %}
+
+      {% if products %}
+      <div class="row g-3">
+        {% for product in products %}
+        <div class="col-lg-4 col-md-6">
+          {% include 'shop/_product_card.html' %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Paginare -->
+      {% if pagination.pages > 1 %}
+      <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+          {% if pagination.has_prev %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ pagination.prev_num }}">‹</a>
+          </li>
+          {% endif %}
+          {% for p in pagination.iter_pages() %}
+            {% if p %}
+            <li class="page-item {% if p == pagination.page %}active{% endif %}">
+              <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">…</span></li>
+            {% endif %}
+          {% endfor %}
+          {% if pagination.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ pagination.next_num }}">›</a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+
+      {% else %}
+      <div class="empty-state text-center py-5">
+        <div style="font-size:80px">🔍</div>
+        <h5 class="mt-3 fw-700">Nu am găsit produse</h5>
+        <p class="text-muted">Încearcă să modifici filtrele sau căutarea.</p>
+        <a href="{{ url_for('shop.products') }}" class="btn btn-pink">Resetează filtrele</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

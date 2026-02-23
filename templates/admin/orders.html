@@ -1,0 +1,43 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Comenzi{% endblock %}
+
+{% block content %}
+<h3 class="fw-800 mb-4">🧾 Comenzi</h3>
+
+<!-- Filtre status -->
+<div class="d-flex gap-2 mb-4 flex-wrap">
+  <a href="{{ url_for('admin.orders') }}" class="btn btn-sm {% if not status_filter %}btn-pink{% else %}btn-outline-secondary{% endif %}">Toate</a>
+  <a href="{{ url_for('admin.orders', status='pending') }}"   class="btn btn-sm {% if status_filter=='pending'   %}btn-warning{% else %}btn-outline-secondary{% endif %}">⏳ În așteptare</a>
+  <a href="{{ url_for('admin.orders', status='confirmed') }}" class="btn btn-sm {% if status_filter=='confirmed' %}btn-success{% else %}btn-outline-secondary{% endif %}">✅ Confirmate</a>
+  <a href="{{ url_for('admin.orders', status='shipped') }}"   class="btn btn-sm {% if status_filter=='shipped'   %}btn-info{% else %}btn-outline-secondary{% endif %}">🚚 Expediate</a>
+  <a href="{{ url_for('admin.orders', status='delivered') }}" class="btn btn-sm {% if status_filter=='delivered' %}btn-primary{% else %}btn-outline-secondary{% endif %}">📦 Livrate</a>
+  <a href="{{ url_for('admin.orders', status='cancelled') }}" class="btn btn-sm {% if status_filter=='cancelled' %}btn-danger{% else %}btn-outline-secondary{% endif %}">❌ Anulate</a>
+</div>
+
+<div class="admin-card">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr><th>#</th><th>Client</th><th>Telefon</th><th>Produse</th><th>Total</th><th>Status</th><th>Data</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td class="fw-700">#{{ order.id }}</td>
+          <td>{{ order.full_name }}<br><small class="text-muted">{{ order.email }}</small></td>
+          <td>{{ order.phone }}</td>
+          <td>{{ order.items|length }} produse</td>
+          <td class="fw-700 text-pink">{{ "%.2f"|format(order.total) }} RON</td>
+          <td><span class="badge bg-{{ order.status_label[1] }}">{{ order.status_label[0] }}</span></td>
+          <td class="text-muted small">{{ order.created_at.strftime('%d.%m.%Y<br>%H:%M')|safe }}</td>
+          <td><a href="{{ url_for('admin.order_detail', order_id=order.id) }}" class="btn btn-sm btn-outline-primary">Detalii</a></td>
+        </tr>
+        {% endfor %}
+        {% if not orders %}
+        <tr><td colspan="8" class="text-center text-muted py-4">Nu există comenzi.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

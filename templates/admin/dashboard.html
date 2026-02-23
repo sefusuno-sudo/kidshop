@@ -1,0 +1,96 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="fw-800 mb-0">📊 Dashboard</h3>
+  <span class="text-muted small">Bun venit, {{ current_user.username }}!</span>
+</div>
+
+<!-- Stats cards -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3 col-6">
+    <div class="admin-stat-card bg-pink-soft">
+      <div class="stat-icon">📦</div>
+      <div class="stat-value">{{ stats.total_products }}</div>
+      <div class="stat-name">Produse</div>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="admin-stat-card bg-blue-soft">
+      <div class="stat-icon">🧾</div>
+      <div class="stat-value">{{ stats.total_orders }}</div>
+      <div class="stat-name">Comenzi total</div>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="admin-stat-card bg-yellow-soft">
+      <div class="stat-icon">⏳</div>
+      <div class="stat-value">{{ stats.pending_orders }}</div>
+      <div class="stat-name">În așteptare</div>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="admin-stat-card bg-green-soft">
+      <div class="stat-icon">👥</div>
+      <div class="stat-value">{{ stats.total_users }}</div>
+      <div class="stat-name">Utilizatori</div>
+    </div>
+  </div>
+</div>
+
+<!-- Comenzi recente -->
+<div class="admin-card">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="fw-800 mb-0">📋 Comenzi recente</h5>
+    <a href="{{ url_for('admin.orders') }}" class="btn btn-sm btn-outline-pink">Vezi toate</a>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>#</th><th>Client</th><th>Telefon</th><th>Total</th><th>Status</th><th>Data</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in recent_orders %}
+        <tr>
+          <td class="fw-700">#{{ order.id }}</td>
+          <td>{{ order.full_name }}</td>
+          <td>{{ order.phone }}</td>
+          <td class="fw-700 text-pink">{{ "%.2f"|format(order.total) }} RON</td>
+          <td><span class="badge bg-{{ order.status_label[1] }}">{{ order.status_label[0] }}</span></td>
+          <td class="text-muted small">{{ order.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+          <td><a href="{{ url_for('admin.order_detail', order_id=order.id) }}" class="btn btn-sm btn-outline-secondary">Detalii</a></td>
+        </tr>
+        {% endfor %}
+        {% if not recent_orders %}
+        <tr><td colspan="7" class="text-center text-muted py-4">Nu există comenzi încă.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Quick actions -->
+<div class="row g-3 mt-2">
+  <div class="col-md-6">
+    <div class="admin-card text-center">
+      <div style="font-size:40px">➕</div>
+      <h6 class="fw-700 mt-2">Adaugă produs nou</h6>
+      <a href="{{ url_for('admin.add_product') }}" class="btn btn-pink btn-sm mt-1">Adaugă</a>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="admin-card text-center">
+      <div style="font-size:40px">💬</div>
+      <h6 class="fw-700 mt-2">Mesaje contact
+        {% if stats.unread_msgs > 0 %}
+        <span class="badge bg-danger">{{ stats.unread_msgs }}</span>
+        {% endif %}
+      </h6>
+      <a href="{{ url_for('admin.messages') }}" class="btn btn-outline-pink btn-sm mt-1">Vizualizează</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

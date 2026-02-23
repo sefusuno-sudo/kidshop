@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% block title %}Acasă{% endblock %}
+
+{% block content %}
+
+<!-- ── HERO SECTION ────────────────────────────────────────────────────── -->
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center min-vh-60">
+      <div class="col-lg-6">
+        <div class="hero-badge mb-3">✨ Colecția Primăvară 2024</div>
+        <h1 class="hero-title">Haine <span class="text-gradient">vesele</span> pentru<br>copii fericiți! 🌸</h1>
+        <p class="hero-subtitle">Îmbrăcăminte, încălțăminte și accesorii de calitate pentru copii de la 0 la 10 ani. Materiale sigure, design adorabil!</p>
+        <div class="d-flex gap-3 flex-wrap">
+          <a href="{{ url_for('shop.products') }}" class="btn btn-hero-primary">
+            <i class="bi bi-bag-heart me-2"></i>Cumpără acum
+          </a>
+          <a href="#featured" class="btn btn-hero-outline">
+            <i class="bi bi-star me-2"></i>Oferte speciale
+          </a>
+        </div>
+        <!-- Stats -->
+        <div class="d-flex gap-4 mt-4">
+          <div class="stat-item"><span class="stat-num">500+</span><span class="stat-label">Produse</span></div>
+          <div class="stat-item"><span class="stat-num">2K+</span><span class="stat-label">Clienți fericiți</span></div>
+          <div class="stat-item"><span class="stat-num">100%</span><span class="stat-label">Materiale sigure</span></div>
+        </div>
+      </div>
+      <div class="col-lg-6 text-center d-none d-lg-block">
+        <div class="hero-illustration">
+          <div class="floating-emoji e1">👶</div>
+          <div class="floating-emoji e2">🌸</div>
+          <div class="floating-emoji e3">🧸</div>
+          <div class="floating-emoji e4">⭐</div>
+          <div class="floating-emoji e5">🎀</div>
+          <div class="hero-circle">
+            <span style="font-size:120px">🧒</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CATEGORII RAPIDE ────────────────────────────────────────────────── -->
+<section class="py-5 bg-light-pastel">
+  <div class="container">
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-4 col-6">
+        <a href="{{ url_for('shop.products', category='imbracaminte') }}" class="category-card category-pink">
+          <div class="cat-icon">👗</div>
+          <h5>Îmbrăcăminte</h5>
+          <p class="small text-muted">Body-uri, seturi, rochii</p>
+        </a>
+      </div>
+      <div class="col-md-4 col-6">
+        <a href="{{ url_for('shop.products', category='incaltaminte') }}" class="category-card category-blue">
+          <div class="cat-icon">👟</div>
+          <h5>Încălțăminte</h5>
+          <p class="small text-muted">Pantofi, adidași, cizme</p>
+        </a>
+      </div>
+      <div class="col-md-4 col-6">
+        <a href="{{ url_for('shop.products', category='accesorii') }}" class="category-card category-yellow">
+          <div class="cat-icon">🎒</div>
+          <h5>Accesorii</h5>
+          <p class="small text-muted">Rucsacuri, pălării, șepci</p>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── OFERTE SPECIALE ─────────────────────────────────────────────────── -->
+{% if featured %}
+<section class="py-5" id="featured">
+  <div class="container">
+    <div class="section-header text-center mb-5">
+      <span class="section-badge">🔥 Reduceri</span>
+      <h2 class="section-title">Oferte Speciale</h2>
+      <p class="text-muted">Produse selectate cu prețuri speciale, pentru o perioadă limitată!</p>
+    </div>
+    <div class="row g-4">
+      {% for product in featured %}
+      <div class="col-lg-4 col-md-6">
+        {% include 'shop/_product_card.html' %}
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-4">
+      <a href="{{ url_for('shop.products') }}" class="btn btn-outline-pink btn-lg">
+        Vezi toate produsele <i class="bi bi-arrow-right ms-2"></i>
+      </a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ── ÎMBRĂCĂMINTE ───────────────────────────────────────────────────── -->
+{% if imbracaminte %}
+<section class="py-5 bg-light-pastel">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 class="fw-800">👗 Îmbrăcăminte</h3>
+      <a href="{{ url_for('shop.products', category='imbracaminte') }}" class="btn btn-sm btn-outline-pink">
+        Vezi tot <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+    <div class="row g-3">
+      {% for product in imbracaminte %}
+      <div class="col-lg-3 col-md-6">{% include 'shop/_product_card.html' %}</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ── ÎNCĂLȚĂMINTE ───────────────────────────────────────────────────── -->
+{% if incaltaminte %}
+<section class="py-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 class="fw-800">👟 Încălțăminte</h3>
+      <a href="{{ url_for('shop.products', category='incaltaminte') }}" class="btn btn-sm btn-outline-pink">
+        Vezi tot <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+    <div class="row g-3">
+      {% for product in incaltaminte %}
+      <div class="col-lg-3 col-md-6">{% include 'shop/_product_card.html' %}</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ── ACCESORII ──────────────────────────────────────────────────────── -->
+{% if accesorii %}
+<section class="py-5 bg-light-pastel">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 class="fw-800">🎒 Accesorii</h3>
+      <a href="{{ url_for('shop.products', category='accesorii') }}" class="btn btn-sm btn-outline-pink">
+        Vezi tot <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+    <div class="row g-3">
+      {% for product in accesorii %}
+      <div class="col-lg-3 col-md-6">{% include 'shop/_product_card.html' %}</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ── DE CE NOI? ─────────────────────────────────────────────────────── -->
+<section class="py-5">
+  <div class="container">
+    <h2 class="text-center fw-800 mb-5">De ce să alegi KidsShop? 💝</h2>
+    <div class="row g-4 text-center">
+      <div class="col-md-3 col-6">
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h6 class="fw-700">Materiale sigure</h6>
+          <p class="small text-muted">Certificate, non-toxice, testate pentru copii</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="feature-card">
+          <div class="feature-icon">🚚</div>
+          <h6 class="fw-700">Livrare rapidă</h6>
+          <p class="small text-muted">Livrare în 24-48h în toată România</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="feature-card">
+          <div class="feature-icon">↩️</div>
+          <h6 class="fw-700">Retur gratuit</h6>
+          <p class="small text-muted">30 zile retur fără întrebări</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="feature-card">
+          <div class="feature-icon">💬</div>
+          <h6 class="fw-700">Suport 24/7</h6>
+          <p class="small text-muted">Suntem mereu aici pentru tine</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

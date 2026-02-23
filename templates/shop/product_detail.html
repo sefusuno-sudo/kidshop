@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Acasă</a></li>
+      <li class="breadcrumb-item"><a href="{{ url_for('shop.products', category=product.category) }}">{{ product.category }}</a></li>
+      <li class="breadcrumb-item active">{{ product.name }}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-5">
+    <!-- ── GALERIE IMAGINI ─────────────────────────────────────────────── -->
+    <div class="col-lg-5">
+      <div class="product-gallery">
+        <div class="main-image-wrap">
+          {% if product.discount_percent > 0 %}
+          <span class="gallery-badge-discount">-{{ product.discount_percent }}%</span>
+          {% endif %}
+          <img id="mainImage"
+               src="{{ url_for('static', filename='images/products/' ~ product.image) }}"
+               alt="{{ product.name }}" class="img-fluid rounded-4 shadow"
+               onerror="this.src='{{ url_for('static', filename='images/placeholder.png') }}'">
+        </div>
+        <!-- Thumbnail-uri (din imaginea principală pentru demo) -->
+        <div class="thumbs-row mt-3">
+          <img src="{{ url_for('static', filename='images/products/' ~ product.image) }}"
+               class="img-thumb active" onclick="switchImage(this)"
+               onerror="this.src='{{ url_for('static', filename='images/placeholder.png') }}'">
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DETALII PRODUS ─────────────────────────────────────────────── -->
+    <div class="col-lg-7">
+      <span class="product-category-badge">{{ product.category }}</span>
+      <h1 class="product-detail-title mt-2">{{ product.name }}</h1>
+
+      {% if product.age_group %}
+      <p class="text-muted"><i class="bi bi-person-heart me-1"></i>Vârstă: <strong>{{ product.age_group }}</strong></p>
+      {% endif %}
+
+      <!-- Preț -->
+      <div class="price-block my-3">
+        <span class="detail-price">{{ "%.2f"|format(product.price) }} RON</span>
+        {% if product.old_price %}
+        <span class="detail-old-price">{{ "%.2f"|format(product.old_price) }} RON</span>
+        <span class="badge bg-danger ms-2">-{{ product.discount_percent }}%</span>
+        {% endif %}
+      </div>
+
+      <!-- Stoc -->
+      <div class="mb-3">
+        {% if product.stock > 0 %}
+        <span class="badge-stock-ok"><i class="bi bi-check-circle me-1"></i>În stoc ({{ product.stock }} buc.)</span>
+        {% else %}
+        <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Stoc epuizat</span>
+        {% endif %}
+      </div>
+
+      <!-- Descriere -->
+      {% if product.description %}
+      <p class="product-description">{{ product.description }}</p>
+      {% endif %}
+
+      <!-- Formular adaugă în coș -->
+      <form action="{{ url_for('cart.add_to_cart', product_id=product.id) }}" method="post" class="add-to-cart-form">
+
+        <!-- Mărimi -->
+        {% if product.sizes_list %}
+        <div class="selector-group mb-3">
+          <label class="fw-600 d-block mb-2">Mărime:</label>
+          <div class="size-selector">
+            {% for size in product.sizes_list %}
+            <input type="radio" name="size" id="size_{{ size }}" value="{{ size }}" class="d-none">
+            <label for="size_{{ size }}" class="size-btn">{{ size }}</label>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Culori -->
+        {% if product.colors_list %}
+        <div class="selector-group mb-3">
+          <label class="fw-600 d-block mb-2">Culoare:</label>
+          <div class="color-selector">
+            {% for color in product.colors_list %}
+            <input type="radio" name="color" id="color_{{ color }}" value="{{ color }}" class="d-none">
+            <label for="color_{{ color }}" class="color-btn">{{ color }}</label>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Cantitate -->
+        <div class="mb-3">
+          <label class="fw-600 d-block mb-2">Cantitate:</label>
+          <div class="quantity-input">
+            <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
+            <input type="number" name="quantity" id="qty" value="1" min="1" max="{{ product.stock }}" class="qty-field">
+            <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+          </div>
+        </div>
+
+        {% if product.stock > 0 %}
+        <button type="submit" class="btn btn-add-cart-lg">
+          <i class="bi bi-bag-plus me-2"></i>Adaugă în coș
+        </button>
+        {% else %}
+        <button type="button" class="btn btn-secondary btn-lg w-100" disabled>Stoc epuizat</button>
+        {% endif %}
+      </form>
+
+      <!-- Extra info -->
+      <div class="product-perks mt-4">
+        <div class="perk"><i class="bi bi-shield-check text-success me-2"></i>Materiale certificate, sigure</div>
+        <div class="perk"><i class="bi bi-truck text-primary me-2"></i>Livrare 24-48h</div>
+        <div class="perk"><i class="bi bi-arrow-repeat text-info me-2"></i>Retur gratuit 30 zile</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PRODUSE SIMILARE ──────────────────────────────────────────────── -->
+  {% if related %}
+  <hr class="my-5">
+  <h4 class="fw-800 mb-4">🛍️ Produse similare</h4>
+  <div class="row g-3">
+    {% for product in related %}
+    <div class="col-lg-3 col-md-6">{% include 'shop/_product_card.html' %}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function changeQty(delta) {
+  const inp = document.getElementById('qty');
+  inp.value = Math.max(1, parseInt(inp.value) + delta);
+}
+function switchImage(el) {
+  document.getElementById('mainImage').src = el.src;
+  document.querySelectorAll('.img-thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+{% endblock %}

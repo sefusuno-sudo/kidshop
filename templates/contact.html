@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Contact{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row g-5 justify-content-center">
+    <div class="col-lg-5">
+      <h2 class="fw-800 mb-2">💬 Contactează-ne</h2>
+      <p class="text-muted mb-4">Ai întrebări? Suntem aici să te ajutăm!</p>
+      <div class="contact-info-item mb-3">
+        <i class="bi bi-telephone-fill text-pink me-3 fs-5"></i>
+        <div><strong>Telefon</strong><br><span class="text-muted">+40 700 000 000</span></div>
+      </div>
+      <div class="contact-info-item mb-3">
+        <i class="bi bi-envelope-fill text-pink me-3 fs-5"></i>
+        <div><strong>Email</strong><br><span class="text-muted">contact@kidshop.ro</span></div>
+      </div>
+      <div class="contact-info-item mb-3">
+        <i class="bi bi-clock-fill text-pink me-3 fs-5"></i>
+        <div><strong>Program</strong><br><span class="text-muted">Lun–Vin: 9:00–18:00</span></div>
+      </div>
+      <div class="contact-info-item">
+        <i class="bi bi-whatsapp text-success me-3 fs-5"></i>
+        <div><strong>WhatsApp</strong><br><span class="text-muted">+40 700 000 000</span></div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="contact-form-card">
+        <h5 class="fw-800 mb-4">✉️ Trimite un mesaj</h5>
+        <form method="post" novalidate>
+          {{ form.hidden_tag() }}
+          <div class="mb-3">
+            <label class="form-label fw-600">{{ form.name.label.text }}</label>
+            {{ form.name(class='form-control' + (' is-invalid' if form.name.errors else ''), placeholder='Numele tău') }}
+            {% for e in form.name.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-600">{{ form.email.label.text }}</label>
+            {{ form.email(class='form-control' + (' is-invalid' if form.email.errors else ''), placeholder='email@exemplu.ro') }}
+            {% for e in form.email.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="mb-4">
+            <label class="form-label fw-600">{{ form.message.label.text }}</label>
+            {{ form.message(class='form-control' + (' is-invalid' if form.message.errors else ''), rows=5, placeholder='Scrie mesajul tău aici...') }}
+            {% for e in form.message.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+          </div>
+          <button type="submit" class="btn btn-hero-primary w-100">
+            <i class="bi bi-send me-2"></i>Trimite mesajul
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

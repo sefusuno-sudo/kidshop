@@ -1,0 +1,59 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Produse{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="fw-800 mb-0">📦 Produse</h3>
+  <a href="{{ url_for('admin.add_product') }}" class="btn btn-pink">
+    <i class="bi bi-plus-circle me-1"></i>Adaugă produs
+  </a>
+</div>
+
+<div class="admin-card">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Imagine</th><th>Denumire</th><th>Categorie</th><th>Preț</th>
+          <th>Stoc</th><th>Activ</th><th>Ofertă</th><th>Acțiuni</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+        <tr>
+          <td>
+            <img src="{{ url_for('static', filename='images/products/' ~ product.image) }}"
+                 alt="{{ product.name }}" style="width:50px;height:50px;object-fit:cover;border-radius:8px;"
+                 onerror="this.src='{{ url_for('static', filename='images/placeholder.png') }}'">
+          </td>
+          <td><a href="{{ url_for('shop.product_detail', product_id=product.id) }}" target="_blank" class="fw-600 text-dark">{{ product.name }}</a></td>
+          <td><span class="badge bg-light text-dark">{{ product.category }}</span></td>
+          <td class="fw-700">{{ "%.2f"|format(product.price) }} RON</td>
+          <td>
+            <span class="badge {% if product.stock > 0 %}bg-success{% else %}bg-danger{% endif %}">
+              {{ product.stock }}
+            </span>
+          </td>
+          <td>{% if product.is_active %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}<i class="bi bi-x-circle-fill text-danger"></i>{% endif %}</td>
+          <td>{% if product.is_featured %}<i class="bi bi-star-fill text-warning"></i>{% else %}<span class="text-muted">—</span>{% endif %}</td>
+          <td>
+            <a href="{{ url_for('admin.edit_product', product_id=product.id) }}" class="btn btn-sm btn-outline-primary me-1">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <form action="{{ url_for('admin.delete_product', product_id=product.id) }}" method="post" class="d-inline"
+                  onsubmit="return confirm('Ești sigur că vrei să ștergi „{{ product.name }}"?')">
+              <button type="submit" class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-trash3"></i>
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+        {% if not products %}
+        <tr><td colspan="8" class="text-center text-muted py-4">Nu există produse.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

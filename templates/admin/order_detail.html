@@ -1,0 +1,65 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Comanda #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="fw-800 mb-0">Comanda #{{ order.id }}</h3>
+  <a href="{{ url_for('admin.orders') }}" class="btn btn-outline-secondary btn-sm">← Înapoi</a>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="admin-card">
+      <h5 class="fw-800 mb-3">👤 Date client</h5>
+      <dl class="row mb-0">
+        <dt class="col-4 text-muted">Nume:</dt><dd class="col-8 fw-600">{{ order.full_name }}</dd>
+        <dt class="col-4 text-muted">Email:</dt><dd class="col-8">{{ order.email }}</dd>
+        <dt class="col-4 text-muted">Telefon:</dt><dd class="col-8">{{ order.phone }}</dd>
+        <dt class="col-4 text-muted">Adresă:</dt><dd class="col-8">{{ order.address }}</dd>
+        {% if order.notes %}<dt class="col-4 text-muted">Note:</dt><dd class="col-8 fst-italic">{{ order.notes }}</dd>{% endif %}
+        <dt class="col-4 text-muted">Data:</dt><dd class="col-8">{{ order.created_at.strftime('%d %B %Y, %H:%M') }}</dd>
+      </dl>
+    </div>
+
+    <div class="admin-card mt-3">
+      <h5 class="fw-800 mb-3">🛒 Produse comandate</h5>
+      <table class="table align-middle">
+        <thead><tr><th>Produs</th><th>Mărime</th><th>Cantitate</th><th>Preț/buc.</th><th>Subtotal</th></tr></thead>
+        <tbody>
+          {% for item in order.items %}
+          <tr>
+            <td class="fw-600">{{ item.product.name }}</td>
+            <td>{{ item.size or '—' }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ "%.2f"|format(item.unit_price) }} RON</td>
+            <td class="fw-700">{{ "%.2f"|format(item.subtotal) }} RON</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr class="table-light">
+            <td colspan="4" class="text-end fw-800">Total:</td>
+            <td class="fw-800 text-pink fs-5">{{ "%.2f"|format(order.total) }} RON</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="admin-card">
+      <h5 class="fw-800 mb-3">📋 Status comandă</h5>
+      <div class="mb-3">
+        Status curent: <span class="badge bg-{{ order.status_label[1] }} ms-1">{{ order.status_label[0] }}</span>
+      </div>
+      <form method="post">
+        {{ form.hidden_tag() }}
+        {{ form.status(class='form-select mb-3') }}
+        <button type="submit" class="btn btn-pink w-100">
+          <i class="bi bi-arrow-repeat me-1"></i>Actualizează statusul
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

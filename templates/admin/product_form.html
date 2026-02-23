@@ -1,0 +1,84 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="fw-800 mb-0">{{ title }}</h3>
+  <a href="{{ url_for('admin.products') }}" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-left me-1"></i>Înapoi
+  </a>
+</div>
+
+<div class="admin-card" style="max-width:800px">
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+    <div class="row g-3">
+      <div class="col-md-8">
+        <label class="form-label fw-600">{{ form.name.label.text }}</label>
+        {{ form.name(class='form-control' + (' is-invalid' if form.name.errors else '')) }}
+        {% for e in form.name.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-600">{{ form.category.label.text }}</label>
+        {{ form.category(class='form-select' + (' is-invalid' if form.category.errors else '')) }}
+        {% for e in form.category.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-600">{{ form.price.label.text }}</label>
+        {{ form.price(class='form-control' + (' is-invalid' if form.price.errors else ''), placeholder='0.00') }}
+        {% for e in form.price.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-600">{{ form.old_price.label.text }} <span class="text-muted small">(opțional)</span></label>
+        {{ form.old_price(class='form-control', placeholder='Preț înainte de reducere') }}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-600">{{ form.stock.label.text }}</label>
+        {{ form.stock(class='form-control') }}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-600">{{ form.age_group.label.text }}</label>
+        {{ form.age_group(class='form-control', placeholder='ex: 0-2 ani') }}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-600">{{ form.sizes.label.text }}</label>
+        {{ form.sizes(class='form-control', placeholder='68,74,80,86') }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-600">{{ form.colors.label.text }}</label>
+        {{ form.colors(class='form-control', placeholder='rosu,albastru,verde') }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-600">{{ form.image.label.text }}</label>
+        {{ form.image(class='form-control') }}
+        {% if product and product.image %}
+        <small class="text-muted">Curent: {{ product.image }}</small>
+        {% endif %}
+        {% for e in form.image.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+      </div>
+      <div class="col-12">
+        <label class="form-label fw-600">{{ form.description.label.text }}</label>
+        {{ form.description(class='form-control', rows=3) }}
+      </div>
+      <div class="col-md-6">
+        <div class="form-check">
+          {{ form.is_featured(class='form-check-input') }}
+          <label class="form-check-label fw-600">{{ form.is_featured.label.text }}</label>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-check">
+          {{ form.is_active(class='form-check-input') }}
+          <label class="form-check-label fw-600">{{ form.is_active.label.text }}</label>
+        </div>
+      </div>
+    </div>
+    <div class="mt-4 d-flex gap-2">
+      <button type="submit" class="btn btn-pink">
+        <i class="bi bi-save me-1"></i>{{ form.submit.label.text }}
+      </button>
+      <a href="{{ url_for('admin.products') }}" class="btn btn-outline-secondary">Anulează</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

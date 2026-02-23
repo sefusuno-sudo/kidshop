@@ -1,0 +1,29 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Mesaje contact{% endblock %}
+
+{% block content %}
+<h3 class="fw-800 mb-4">💬 Mesaje contact</h3>
+
+<div class="admin-card">
+  {% if messages %}
+  {% for msg in messages %}
+  <div class="border rounded-3 p-3 mb-3">
+    <div class="d-flex justify-content-between align-items-start">
+      <div>
+        <h6 class="fw-800 mb-0">{{ msg.name }}</h6>
+        <a href="mailto:{{ msg.email }}" class="text-muted small">{{ msg.email }}</a>
+      </div>
+      <small class="text-muted">{{ msg.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+    </div>
+    <hr class="my-2">
+    <p class="mb-0">{{ msg.message }}</p>
+  </div>
+  {% endfor %}
+  {% else %}
+  <div class="text-center py-5 text-muted">
+    <div style="font-size:60px">📭</div>
+    <p class="mt-2">Nu există mesaje.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

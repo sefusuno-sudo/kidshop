@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}Coșul meu{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="fw-800 mb-4">🛒 Coșul meu</h2>
+
+  {% if items %}
+  <div class="row g-4">
+    <!-- ── LISTA PRODUSE ──────────────────────────────────────────────── -->
+    <div class="col-lg-8">
+      {% for item in items %}
+      <div class="cart-item-card mb-3">
+        <div class="row align-items-center g-3">
+          <div class="col-3 col-md-2">
+            <img src="{{ url_for('static', filename='images/products/' ~ item.product.image) }}"
+                 alt="{{ item.product.name }}" class="cart-item-img"
+                 onerror="this.src='{{ url_for('static', filename='images/placeholder.png') }}'">
+          </div>
+          <div class="col-9 col-md-5">
+            <a href="{{ url_for('shop.product_detail', product_id=item.product.id) }}" class="text-dark text-decoration-none">
+              <h6 class="fw-700 mb-1">{{ item.product.name }}</h6>
+            </a>
+            <small class="text-muted">
+              {% if item.size %}Mărime: {{ item.size }} &bull; {% endif %}
+              {% if item.color %}Culoare: {{ item.color }}{% endif %}
+            </small>
+            <div class="fw-600 text-pink mt-1">{{ "%.2f"|format(item.product.price) }} RON / buc.</div>
+          </div>
+          <div class="col-md-3">
+            <form action="{{ url_for('cart.update_cart', key=item.key) }}" method="post" class="quantity-form">
+              <div class="quantity-input-sm">
+                <button type="button" class="qty-btn-sm" onclick="changeQtyForm(this, -1)">−</button>
+                <input type="number" name="quantity" value="{{ item.quantity }}" min="0"
+                       class="qty-field-sm" onchange="this.form.submit()">
+                <button type="button" class="qty-btn-sm" onclick="changeQtyForm(this, 1)">+</button>
+              </div>
+            </form>
+          </div>
+          <div class="col-md-2 text-end">
+            <div class="fw-800 text-dark">{{ "%.2f"|format(item.subtotal) }} RON</div>
+            <form action="{{ url_for('cart.remove_from_cart', key=item.key) }}" method="post" class="mt-1">
+              <button type="submit" class="btn btn-link text-danger btn-sm p-0">
+                <i class="bi bi-trash3"></i> Șterge
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- ── SUMAR COMANDĂ ──────────────────────────────────────────────── -->
+    <div class="col-lg-4">
+      <div class="order-summary-card">
+        <h5 class="fw-800 mb-4">📋 Sumar comandă</h5>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">Subtotal</span>
+          <span>{{ "%.2f"|format(total) }} RON</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">Transport</span>
+          <span class="text-success">GRATUIT</span>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between fw-800 fs-5">
+          <span>Total</span>
+          <span class="text-pink">{{ "%.2f"|format(total) }} RON</span>
+        </div>
+        <a href="{{ url_for('cart.checkout') }}" class="btn btn-hero-primary w-100 mt-4">
+          <i class="bi bi-credit-card me-2"></i>Finalizează comanda
+        </a>
+        <a href="{{ url_for('shop.products') }}" class="btn btn-outline-secondary w-100 mt-2 btn-sm">
+          <i class="bi bi-arrow-left me-1"></i>Continuă cumpărăturile
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="empty-state text-center py-5">
+    <div style="font-size:90px">🛒</div>
+    <h4 class="mt-3 fw-700">Coșul tău este gol</h4>
+    <p class="text-muted">Adaugă produse pentru a continua cumpărăturile!</p>
+    <a href="{{ url_for('shop.products') }}" class="btn btn-hero-primary">
+      <i class="bi bi-bag-heart me-2"></i>Descoperă produsele
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function changeQtyForm(btn, delta) {
+  const form = btn.closest('form');
+  const inp  = form.querySelector('input[name="quantity"]');
+  inp.value = Math.max(0, parseInt(inp.value) + delta);
+  form.submit();
+}
+</script>
+{% endblock %}

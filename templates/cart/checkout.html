@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Finalizare comandă{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="fw-800 mb-4">💳 Finalizare comandă</h2>
+
+  <div class="row g-4">
+    <!-- ── FORMULAR ───────────────────────────────────────────────────── -->
+    <div class="col-lg-7">
+      <div class="checkout-form-card">
+        <h5 class="fw-800 mb-4">📦 Date livrare</h5>
+        <form action="{{ url_for('cart.checkout') }}" method="post" novalidate>
+          {{ form.hidden_tag() }}
+          <div class="mb-3">
+            <label class="form-label fw-600">{{ form.full_name.label.text }}</label>
+            {{ form.full_name(class='form-control' + (' is-invalid' if form.full_name.errors else ''), placeholder='Ion Popescu') }}
+            {% for e in form.full_name.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-600">{{ form.email.label.text }}</label>
+              {{ form.email(class='form-control' + (' is-invalid' if form.email.errors else ''), placeholder='email@exemplu.ro') }}
+              {% for e in form.email.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-600">{{ form.phone.label.text }}</label>
+              {{ form.phone(class='form-control' + (' is-invalid' if form.phone.errors else ''), placeholder='+40 7xx xxx xxx') }}
+              {% for e in form.phone.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+            </div>
+          </div>
+          <div class="mb-3 mt-3">
+            <label class="form-label fw-600">{{ form.address.label.text }}</label>
+            {{ form.address(class='form-control' + (' is-invalid' if form.address.errors else ''), rows=3, placeholder='Str., nr., bloc, apartament, oraș, județ, cod poștal') }}
+            {% for e in form.address.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="mb-4">
+            <label class="form-label fw-600">{{ form.notes.label.text }} <span class="text-muted small">(opțional)</span></label>
+            {{ form.notes(class='form-control', rows=2, placeholder='Instrucțiuni speciale...') }}
+          </div>
+          <button type="submit" class="btn btn-hero-primary w-100 btn-lg">
+            <i class="bi bi-bag-check me-2"></i>Plasează comanda
+          </button>
+          <p class="text-center text-muted small mt-3">
+            <i class="bi bi-shield-lock me-1"></i>Datele tale sunt în siguranță. Plata se face ramburs.
+          </p>
+        </form>
+      </div>
+    </div>
+
+    <!-- ── SUMAR PRODUSE ──────────────────────────────────────────────── -->
+    <div class="col-lg-5">
+      <div class="order-summary-card">
+        <h5 class="fw-800 mb-3">🛒 Comanda ta</h5>
+        {% for item in items %}
+        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+          <div>
+            <div class="fw-600 small">{{ item.product.name }}</div>
+            {% if item.size %}<small class="text-muted">Mărime: {{ item.size }}</small>{% endif %}
+            <small class="text-muted"> × {{ item.quantity }}</small>
+          </div>
+          <span class="fw-700">{{ "%.2f"|format(item.subtotal) }} RON</span>
+        </div>
+        {% endfor %}
+        <div class="d-flex justify-content-between text-muted mt-2">
+          <span>Transport</span><span class="text-success fw-600">GRATUIT</span>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between fw-800 fs-5">
+          <span>Total</span>
+          <span class="text-pink">{{ "%.2f"|format(total) }} RON</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
